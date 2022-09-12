@@ -10,9 +10,8 @@ private:
   uint32_t _lastReconnectAttempt = 0;
 
   // MQTT details
-  const char *broker = "broker.hivemq.com";
-  const char *topicInit = "v1/devices/solar-power-system/init";
-  const char *topic = "v1/devices/solar-power-system";
+  const char *broker = "schaltzentrale";
+  const char *topic = "homeassistant/sensor/eriks-solarpanel";
 
 public:
   Mqtt(TcpClient &client) : _mqtt(client)
@@ -47,13 +46,12 @@ public:
   void sendSensorData(Ina260 &ina260)
   {
     String comma = String(",");
-    String name = String("\"name\":") + String("\"") + String(ina260.name().c_str()) + String("\"");
     String current = String("\"current\":") + String(ina260.get().readCurrent());
     String voltage = String("\"voltage\":") + String(ina260.get().readBusVoltage());
     String power = String("\"power\":") + String(ina260.get().readPower());
-    String message = String("{") + name + comma + current + comma + voltage + comma + power + String("}");
+    String message = String("{") + current + comma + voltage + comma + power + String("}");
 
-    String sensorTopic = String(topic) + String("/") + String(ina260.name().c_str());    
+    String sensorTopic = String(topic) + String("/") + String(ina260.name().c_str()) + String("/state");    
     Serial.print("Send mqtt message: " + sensorTopic + " " + message);
     _mqtt.publish(sensorTopic.c_str(), message.c_str());
   }
@@ -76,7 +74,6 @@ private:
       return false;
     }
     Serial.println(" success");
-    _mqtt.publish(topicInit, "v1/devices/solar-power-system-started");
     return _mqtt.connected();
   }
 };

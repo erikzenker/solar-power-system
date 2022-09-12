@@ -9,7 +9,7 @@
 #include <memory>
 
 // Global objects
-std::array<Ina260, 3> sensors = {Ina260{"Solar", 0x40}, Ina260{"Consumer", 0x41}, Ina260{"Batterie", 0x44}};
+std::array<Ina260, 3> sensors = {Ina260{"input", 0x40}, Ina260{"output", 0x41}, Ina260{"battery", 0x44}};
 WiFiMulti WiFiMulti;
 WiFiClient client;
 Mqtt<WiFiClient> mqtt(client);
